@@ -27,6 +27,11 @@ optparse = OptionParser.new do |opts|
   opts.on("-d", "--duration LENGTH", "Length, in minute of data to parse (default: 5)") do |duration|
     @@options[:duration] = duration
   end
+  # the following helps getting data like from -10mins until -5 mins
+  @@options[:until] = 'now'
+  opts.on("-t", "--until_minutes LENGTH", "Length, in minute of data to parse (default:now)") do |until_minutes|
+    @@options[:until] = until_minutes
+  end
   @@options[:warning] = nil
   opts.on("-w", "--warning VALUE", "Warning threshold") do |warning|
     @@options[:warning] = warning
@@ -48,11 +53,24 @@ if (@@options[:url].nil? || @@options[:metric].nil? || @@options[:warning].nil? 
   exit 2
 end
 
+if (@@options[:until] != 'now') && (@@options[:until].to_i > @@options[:duration].to_i)
+  puts "Duration should be greater than until"
+  exit 2
+end
+
 def url
   base_url = @@options[:url]
   metric = @@options[:metric]
   duration = @@options[:duration].to_s
-  base_url + "/render/?target=" + metric + "&format=json&from=-" + duration + "mins"
+  until_minutes = @@options[:until].to_s
+  
+  if until_minutes == 'now'
+    until_param = "&until=now"
+  else
+    until_param = "&until=-" + until_minutes + "mins"
+  end
+  
+  base_url + "/render/?target=" + metric + "&format=json&from=-" + duration + "mins" + until_param
 end
 
 data = {}
