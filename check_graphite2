@@ -1,0 +1,145 @@
+#!/usr/bin/env ruby
+
+require "rubygems"
+require "optparse"
+require "rest-client"
+require "json"
+require 'pp'
+
+<<-doc
+    Building on the original version to calculate multiple totals based on timeshifts
+    and adding custom (maybe naive) alert logic
+doc
+
+EXIT_OK = 0
+EXIT_WARNING = 1
+EXIT_CRITICAL = 2
+EXIT_UNKNOWN = 3
+
+INFORMATIONAL_TIMESHIFT = '-1w'
+
+@@options = {}
+
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename($0)} [options]"
+
+  @@options[:url] = nil
+  opts.on("-u", "--url URL", "Target url") do |url|
+    @@options[:url] = url
+  end
+  @@options[:metric] = nil
+  opts.on("-m", "--metric NAME", "Metric path string") do |metric|
+    @@options[:metric] = metric
+  end
+  @@options[:shortname] = nil
+  opts.on("-s", "--shortname SHORTNAME", "Metric short name (used for performance data)") do |shortname|
+    @@options[:shortname] = shortname
+  end
+  @@options[:duration] = 5
+  opts.on("-d", "--duration LENGTH", "Length, in minute of data to parse (default: 5)") do |duration|
+    @@options[:duration] = duration
+  end
+  @@options[:function] = "average"
+  opts.on("-f", "--function \[average \| sum\]", "Function applied to metrics for thresholds (default: average)") do |function|
+    @@options[:function] = function
+  end
+  @@options[:warning] = nil
+  opts.on("-w", "--warning VALUE", "Warning threshold") do |warning|
+    @@options[:warning] = warning
+  end
+  @@options[:critical] = nil
+  opts.on("-c", "--critical VALUE", "Critical threshold") do |critical|
+    @@options[:critical] = critical
+  end
+  
+  @@options[:timeShift] = nil
+  opts.on("-t", "--timeShift VALUE", "Graphite timeshifts - 1d, 1w etc") do |timeShift|
+    @@options[:timeShift] = timeShift
+  end
+
+  @@options[:warning_ratio] = 0.8
+  opts.on("-r1", "--warning-ratio VALUE", "Current/TimeShifted < VALUE") do |ratio|
+    @@options[:warning_ratio] = ratio
+  end
+
+  opts.on( "-h", "--help", "Display this screen" ) do
+    puts opts
+    exit
+  end
+end
+
+optparse.parse!
+
+if (@@options[:url].nil? || @@options[:metric].nil? || @@options[:timeShift].nil? || @@options[:shortname].nil? )
+  puts optparse
+  exit 2
+end
+
+def url(timeShift=false, custom_timeShift=false)
+  base_url = @@options[:url]
+  metric = @@options[:metric]
+  duration = @@options[:duration].to_s
+
+  if timeShift
+    metric = "timeShift(#{metric},'#{@@options[:timeShift]}')"  
+  elsif custom_timeShift
+    metric = "timeShift(#{metric},'#{INFORMATIONAL_TIMESHIFT}')" 
+  end
+  
+  base_url + "/render/?target=" + metric + "&format=json&from=-" + duration + "mins"
+end
+
+def get_data(url)
+  data = {}
+  data["total"] = 0
+
+  JSON.parse(RestClient.get(URI.encode(url))).each do |cache|
+    data["#{cache['target']}"] = 0
+    count = 0
+    cache["datapoints"].each do |point|
+      unless (point[0].nil?)
+        data["#{cache['target']}"] += point[0]
+        count += 1
+      end
+    end
+  
+    if (count == 0)
+      count = 1
+    end
+  
+    if (@@options[:function] == "average")
+      data["#{cache['target']}"] /= count  
+    end
+    
+    data["total"] += data["#{cache['target']}"]
+  end
+  data
+end
+
+data = get_data(url())
+timeshifted_data = get_data(url(timeShift=true))
+custom_timeshifted_data = get_data(url(false, custom_timeShift=true))
+#pp timeshifted_data
+
+total = data["total"].to_i
+timeshifted = timeshifted_data["total"].to_i
+custom_total = custom_timeshifted_data["total"].to_i
+
+ratio = total.to_f/timeshifted
+
+perfdata = ""
+if !@@options[:shortname].nil?
+  perfdata = "| #{@@options[:shortname]} in_last_#{@@options[:duration]}_mins, " + 
+    "count:#{total}, #{@@options[:timeShift]}_ago_count:#{timeshifted}, " +
+    "ratio:#{ratio}, info_#{INFORMATIONAL_TIMESHIFT}_ago:#{custom_total}"
+end
+
+if (ratio < @@options[:warning_ratio].to_f)
+    puts "WARNING #{perfdata}"
+    exit EXIT_WARNING
+else
+    puts "OK #{perfdata}"
+    exit EXIT_OK
+end
+
+
