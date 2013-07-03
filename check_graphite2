@@ -135,10 +135,10 @@ if !@@options[:shortname].nil?
 end
 
 if (ratio < @@options[:warning_ratio].to_f)
-    puts "WARNING #{perfdata}"
+    puts "WARNING in_last_#{@@options[:duration]}_mins, count:#{total} #{perfdata}"
     exit EXIT_WARNING
 else
-    puts "OK #{perfdata}"
+    puts "OK in_last_#{@@options[:duration]}_mins, count:#{total} #{perfdata}"
     exit EXIT_OK
 end
 
