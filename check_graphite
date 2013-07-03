@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
+require "rubygems"
 require "optparse"
 require "rest-client"
 require "json"
@@ -23,14 +23,17 @@ optparse = OptionParser.new do |opts|
   opts.on("-m", "--metric NAME", "Metric path string") do |metric|
     @@options[:metric] = metric
   end
+  @@options[:shortname] = nil
+  opts.on("-s", "--shortname SHORTNAME", "Metric short name (used for performance data)") do |shortname|
+    @@options[:shortname] = shortname
+  end
   @@options[:duration] = 5
   opts.on("-d", "--duration LENGTH", "Length, in minute of data to parse (default: 5)") do |duration|
     @@options[:duration] = duration
   end
-  # the following helps getting data like from -10mins until -5 mins
-  @@options[:until] = 'now'
-  opts.on("-t", "--until_minutes LENGTH", "Length, in minute of data to parse (default:now)") do |until_minutes|
-    @@options[:until] = until_minutes
+  @@options[:function] = "average"
+  opts.on("-f", "--function \[average \| sum\]", "Function applied to metrics for thresholds (default: average)") do |function|
+    @@options[:function] = function
   end
   @@options[:warning] = nil
   opts.on("-w", "--warning VALUE", "Warning threshold") do |warning|
@@ -53,30 +56,17 @@ if (@@options[:url].nil? || @@options[:metric].nil? || @@options[:warning].nil? 
   exit 2
 end
 
-if (@@options[:until] != 'now') && (@@options[:until].to_i > @@options[:duration].to_i)
-  puts "Duration should be greater than until"
-  exit 2
-end
-
 def url
   base_url = @@options[:url]
   metric = @@options[:metric]
   duration = @@options[:duration].to_s
-  until_minutes = @@options[:until].to_s
-  
-  if until_minutes == 'now'
-    until_param = "&until=now"
-  else
-    until_param = "&until=-" + until_minutes + "mins"
-  end
-  
-  base_url + "/render/?target=" + metric + "&format=json&from=-" + duration + "mins" + until_param
+  base_url + "/render/?target=" + metric + "&format=json&from=-" + duration + "mins"
 end
 
 data = {}
 data["total"] = 0
 
-JSON.parse(RestClient.get(url)).each do |cache|
+JSON.parse(RestClient.get(URI.encode(url))).each do |cache|
   data["#{cache['target']}"] = 0
   count = 0
   cache["datapoints"].each do |point|
@@ -85,32 +75,39 @@ JSON.parse(RestClient.get(url)).each do |cache|
       count += 1
     end
   end
-  data["#{cache['target']}"] /= count
+  if (count == 0)
+    count = 1
+  end
+  if (@@options[:function] == "average")
+    data["#{cache['target']}"] /= count  
+  end
   data["total"] += data["#{cache['target']}"]
 end
 
 total = data["total"].to_i
+perfdata = ""
+perfdata = "| #{@@options[:shortname]}=#{total}" if !@@options[:shortname].nil?
 
 if (@@options[:critical].to_i > @@options[:warning].to_i)
   if (total >= @@options[:critical].to_i)
-    puts "CRITICAL metric count: #{total}"
+    puts "CRITICAL metric count: #{total} #{perfdata}"
     exit EXIT_CRITICAL
   elsif (total >= @@options[:warning].to_i)
-    puts "WARNING metric count: #{total}"
+    puts "WARNING metric count: #{total} #{perfdata}"
     exit EXIT_WARNING
   else
-    puts "OK metric count: #{total}"
+    puts "OK metric count: #{total} #{perfdata}"
     exit EXIT_OK
   end
 else
   if (total <= @@options[:critical].to_i)
-    puts "CRITICAL metric count: #{total}"
+    puts "CRITICAL metric count: #{total} #{perfdata}"
     exit EXIT_CRITICAL
   elsif (total <= @@options[:warning].to_i)
-    puts "WARNING metric count: #{total}"
+    puts "WARNING metric count: #{total} #{perfdata}"
     exit EXIT_WARNING
   else
-    puts "OK metric count: #{total}"
+    puts "OK metric count: #{total} #{perfdata}"
     exit EXIT_OK
   end
 end
