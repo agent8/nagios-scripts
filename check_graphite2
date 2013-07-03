@@ -127,18 +127,15 @@ custom_total = custom_timeshifted_data["total"].to_i
 
 ratio = total.to_f/timeshifted
 
-perfdata = ""
-if !@@options[:shortname].nil?
-  perfdata = "| #{@@options[:shortname]} in_last_#{@@options[:duration]}_mins, " + 
+msg = " #{@@options[:shortname]} in_last_#{@@options[:duration]}_mins, " + 
     "count:#{total}, #{@@options[:timeShift]}_ago_count:#{timeshifted}, " +
     "ratio:#{ratio}, info_#{INFORMATIONAL_TIMESHIFT}_ago:#{custom_total}"
-end
 
 if (ratio < @@options[:warning_ratio].to_f)
-    puts "WARNING in_last_#{@@options[:duration]}_mins, count:#{total} #{perfdata}"
+    puts "WARNING #{msg}"
     exit EXIT_WARNING
 else
-    puts "OK in_last_#{@@options[:duration]}_mins, count:#{total} #{perfdata}"
+    puts "OK #{msg}"
     exit EXIT_OK
 end
 
