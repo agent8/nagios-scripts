@@ -57,9 +57,14 @@ optparse = OptionParser.new do |opts|
     @@options[:timeShift] = timeShift
   end
 
-  @@options[:warning_ratio] = 0.8
-  opts.on("-r1", "--warning-ratio VALUE", "Current/TimeShifted < VALUE") do |ratio|
+  @@options[:warning_ratio] = 0.5
+  opts.on("-r", "--warning-ratio VALUE", "Current/TimeShifted < VALUE") do |ratio|
     @@options[:warning_ratio] = ratio
+  end
+
+  @@options[:timeShifts] = nil #Not setting defaults
+  opts.on("-T", "--timeShifts t1,t2", Array, "Avg for these timeshifts. Overrides single timeshift arg") do |timeShifts|
+    @@options[:timeShifts] = timeShifts
   end
 
   opts.on( "-h", "--help", "Display this screen" ) do
@@ -70,18 +75,20 @@ end
 
 optparse.parse!
 
-if (@@options[:url].nil? || @@options[:metric].nil? || @@options[:timeShift].nil? || @@options[:shortname].nil? )
+if (@@options[:url].nil? || @@options[:metric].nil? || 
+    (@@options[:timeShift].nil? && @@options[:timeShifts].nil? ) || 
+    @@options[:shortname].nil? )
   puts optparse
   exit 2
 end
 
-def url(timeShift=false, custom_timeShift=false)
+def url(timeShift_val=nil, timeShift=false, custom_timeShift=false)
   base_url = @@options[:url]
   metric = @@options[:metric]
   duration = @@options[:duration].to_s
 
   if timeShift
-    metric = "timeShift(#{metric},'#{@@options[:timeShift]}')"  
+    metric = "timeShift(#{metric},'#{timeShift_val}')"  
   elsif custom_timeShift
     metric = "timeShift(#{metric},'#{INFORMATIONAL_TIMESHIFT}')" 
   end
@@ -116,16 +123,29 @@ def get_data(url)
   data
 end
 
+timeshifts = []
+
+if @@options[:timeShifts]
+    timeshifts += @@options[:timeShifts]
+else    
+    timeshifts << @@options[:timeShift]
+end
+
+# get data for each timeshift and avg it 
+timeshifted = 0.0
+timeshifts.each do |t|
+    timeshifted_data = get_data(url(t, timeShift=true))
+    timeshifted += timeshifted_data["total"].to_i
+end
+timeshifted /= timeshifts.size
+
 data = get_data(url())
-timeshifted_data = get_data(url(timeShift=true))
-custom_timeshifted_data = get_data(url(false, custom_timeShift=true))
-#pp timeshifted_data
-
 total = data["total"].to_i
-timeshifted = timeshifted_data["total"].to_i
-custom_total = custom_timeshifted_data["total"].to_i
-
 ratio = total.to_f/timeshifted
+
+# for informational msg
+custom_timeshifted_data = get_data(url(nil, false, custom_timeShift=true))
+custom_total = custom_timeshifted_data["total"].to_i
 
 msg = " #{@@options[:shortname]} in_last_#{@@options[:duration]}_mins, " + 
     "count:#{total}, #{@@options[:timeShift]}_ago_count:#{timeshifted}, " +
