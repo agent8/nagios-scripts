@@ -147,8 +147,10 @@ ratio = total.to_f/timeshifted
 custom_timeshifted_data = get_data(url(nil, false, custom_timeShift=true))
 custom_total = custom_timeshifted_data["total"].to_i
 
+ago = timeshifts.join('_')
+
 msg = " #{@@options[:shortname]} in_last_#{@@options[:duration]}_mins, " + 
-    "count:#{total}, #{@@options[:timeShift]}_ago_count:#{timeshifted}, " +
+    "count:#{total}, #{ago}_ago_count:#{timeshifted}, " +
     "ratio:#{ratio}, info_#{INFORMATIONAL_TIMESHIFT}_ago:#{custom_total}"
 
 if (ratio < @@options[:warning_ratio].to_f)
