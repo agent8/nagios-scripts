@@ -62,6 +62,11 @@ optparse = OptionParser.new do |opts|
     @@options[:warning_ratio] = ratio
   end
 
+  @@options[:critical_ratio] = 0.25
+  opts.on("-R", "--critical-ratio VALUE", "Current/TimeShifted < VALUE") do |ratio|
+    @@options[:critical_ratio] = ratio
+  end
+
   @@options[:timeShifts] = nil #Not setting defaults
   opts.on("-T", "--timeShifts t1,t2", Array, "Avg for these timeshifts. Overrides single timeshift arg") do |timeShifts|
     @@options[:timeShifts] = timeShifts
@@ -153,12 +158,27 @@ msg = " #{@@options[:shortname]} in_last_#{@@options[:duration]}_mins, " +
     "count:#{total}, #{ago}_ago_count:#{timeshifted}, " +
     "ratio:#{ratio}, info_#{INFORMATIONAL_TIMESHIFT}_ago:#{custom_total}"
 
-if (ratio < @@options[:warning_ratio].to_f)
-    puts "WARNING #{msg}"
-    exit EXIT_WARNING
+
+if (@@options[:critical].to_i > @@options[:warning].to_i)
+    if (ratio > @@options[:critical_ratio].to_f)
+        puts "CRITICAL #{msg}"
+        exit EXIT_CRITICAL
+    elsif (ratio > @@options[:warning_ratio].to_f)
+        puts "WARNING #{msg}"
+        exit EXIT_WARNING
+    else
+        puts "OK #{msg}"
+        exit EXIT_OK
+    end
 else
-    puts "OK #{msg}"
-    exit EXIT_OK
+    if (ratio < @@options[:critical_ratio].to_f)
+        puts "CRITICAL #{msg}"
+        exit EXIT_CRITICAL
+    elsif (ratio < @@options[:warning_ratio].to_f)
+        puts "WARNING #{msg}"
+        exit EXIT_WARNING
+    else
+        puts "OK #{msg}"
+        exit EXIT_OK
+    end
 end
-
-
