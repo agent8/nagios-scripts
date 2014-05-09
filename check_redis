@@ -1,0 +1,114 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'rubygems'
+require 'redis'
+
+options = { :conn => { :host => "localhost", :port => 6379, :password => nil, :timeout => 5 }, 
+            :nagios => {}
+          }
+
+OptionParser.new do |opt|
+  opt.banner = "Usage: #{$0} command <options>"
+  
+  opt.separator ""
+  opt.separator "Nagios options:"
+
+  opt.on("-w", "--warn WARN", Integer, "Nagios warning level") { |warn| options[:nagios][:warn] = warn }
+  opt.on("-c", "--crit CRIT", Integer, "Nagios critical level") { |crit| options[:nagios][:crit] = crit }
+  options[:invert] = 0
+  opt.on('-i', '--invert', 'Invert the warning and critical thresholds (less than instead of greater than or equal to)') { |o| options[:invert] = 1 if o }
+
+  opt.separator ""
+  opt.separator "Connection options:"
+
+  opt.on('-H', '--host [HOSTNAME]', 'Hostname (Default: "localhost")') { |o| options[:conn][:host] = o if o }
+  opt.on('-p', '--port [PORT]', 'Port (Default: "6379")') { |o| options[:conn][:port] = o if o }
+  opt.on('-P', '--password [PASSWORD]', 'Password (Default: blank)') { |o| options[:conn][:password] = o if o }
+  opt.on('-t', '--timeout [TIMEOUT]', Integer, 'Timeout in seconds (Default: 5)') { |o| options[:conn][:timeout] = o if o }
+
+  opt.on('-D', '--database [DATABASE]', Integer, 'If using key, select db (Default: 0)') { |o| options[:conn][:db] = o if o }
+  options[:use_stats] = 1
+  opt.on('-K', '--key', 'Use redis key instead of stats') { |o| options[:use_stats] = 0 if o }
+  opt.on('-o', '--operation [OPERATION]', 'A redis operation (redis command) to perform. (Default: \'info\', \'get\' if -K)') { |o| options[:operation] = o if o }
+
+  opt.on_tail("-h", "--help", "Show this message") do
+    puts opt
+    exit 0
+  end
+end.parse!
+
+command = ARGV[0]
+
+class CheckRedis
+
+  def initialize(opts, cmd)
+    @redis = Redis.new(opts[:conn])
+    if (opts[:use_stats] == 1) 
+      stats = @redis.info
+      if stats[cmd]
+        value = stats[cmd].to_i
+      else
+        puts "UNKNOWN: No such key in info - #{cmd}"
+        exit 3
+      end
+    else
+      if opts[:operation]
+        keyvalue = @redis.send("#{opts[:operation]}", cmd)
+      else
+        keyvalue = @redis.get(cmd)
+      end
+
+      if keyvalue
+        value = keyvalue.to_i
+      else
+        puts "UNKNOWN: No such key - #{cmd}"
+        exit 3
+      end
+    end
+
+    check_result(value, opts[:nagios], cmd, opts[:invert])
+
+  rescue Errno::ECONNREFUSED => e
+    puts e.message
+    exit 2
+  rescue Errno::ENETUNREACH => e
+    puts e.message
+    exit 2
+  rescue Errno::EHOSTUNREACH => e
+    puts e.message
+    exit 2
+  rescue Errno::EACCES => e
+    puts e.message
+    exit 2
+  rescue Redis::CommandError => e
+    puts "Did you enter the correct password? #{e.message}"
+    exit 3
+  end
+
+  private
+
+  def check_result(value, options, cmd, invert)
+      if invert == 0 && value >= options[:crit]
+        puts "CRIT: #{cmd} exceeds critical level of #{options[:crit]} : #{value} | #{cmd}=#{value};#{options[:warn]};#{options[:crit]};;"
+        exit 2
+      elsif invert == 0 && value >= options[:warn]
+        puts "WARN: #{cmd} exceeds warning level of #{options[:warn]} : #{value} | #{cmd}=#{value};#{options[:warn]};#{options[:crit]};;"
+        exit 1
+      elsif invert == 1 && value < options[:crit]
+        puts "WARN: #{cmd} is lower than the critical level of #{options[:crit]} : #{value} | #{cmd}=#{value};#{options[:warn]};#{options[:crit]};;"
+        exit 2
+      elsif invert == 1 && value < options[:warn]
+        puts "WARN: #{cmd} is lower than warning level of #{options[:warn]} : #{value} | #{cmd}=#{value};#{options[:warn]};#{options[:crit]};;"
+        exit 1
+      else
+        puts "OK: #{cmd} is ok | #{cmd}=#{value};#{options[:warn]};#{options[:crit]};;"
+        exit 0
+      end 
+
+      # TODO: redis.info has some human_values
+  end
+
+end
+
+CheckRedis.new(options, command)
