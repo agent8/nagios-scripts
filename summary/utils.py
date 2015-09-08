@@ -112,7 +112,7 @@ def get_query_data(graphite_url, metric, sum_type='sum'):
         if not resp:
             continue
         if sum_type == 'avg':
-            total[id] = float(get_avg(resp))
+            total[id] = int(get_avg(resp))
         else:
             total[id] = int(get_total(resp))
 
