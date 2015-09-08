@@ -210,7 +210,7 @@ def format_percent(current, past):
     return html
 
 
-def send_email(results_list, list):
+def send_email(results_list):
     title = subject
     content = ""
     for results in results_list:
@@ -257,7 +257,7 @@ def send_email(results_list, list):
     smtpserver.ehlo
     smtpserver.login(from_email, 'secret008')
 
-    for to in email_list:
+    for to in options.emails.split(','):
         msg['To'] = to
         smtpserver.sendmail(from_email, to, msg.as_string())
 

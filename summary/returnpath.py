@@ -10,4 +10,4 @@ results_list = [
     summarize(graphite_url, 'stats_counts.returnpath_worker*.production.*.returnpath.blackbox.*', 'Message', sum_type={'offline_queue': 'avg'}, sum_total=False)
      ]
 
-send_email(results_list, list, options.subject)
+send_email(results_list)
