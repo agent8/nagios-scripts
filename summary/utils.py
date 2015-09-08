@@ -32,7 +32,7 @@ parser.add_option("--subject",
                   help="Email Subject")
 parser.add_option('--emails', default='waiting@easilydo.com', dest="emails")
 parser.add_option('--sub_title', default='Yesterday', dest="sub_title")
-parser.add_option('--compare_hour', dest="compare_hour", default=False)
+parser.add_option('--compare_hour', action='store_true', dest="compare_hour", default=False)
 
 
 (options, args) = parser.parse_args()
