@@ -74,8 +74,9 @@ def get_avg(cache):
     return total
 
 
-def get_query_path(graphite_url, base_path):
-    url = '%(graphite_url)s/metrics/find?query=%(base_path)s' % locals()
+def get_query_path(base_path):
+    local_graphite_url = graphite_url
+    url = '%(local_graphite_url)s/metrics/find?query=%(base_path)s' % locals()
     try:
         res = requests.get(url, verify=False)
         return res.json()
@@ -85,8 +86,8 @@ def get_query_path(graphite_url, base_path):
 
     return []
 
-def get_query_data(graphite_url, metric, sum_type='sum'):
-
+def get_query_data(metric, sum_type='sum'):
+    local_graphite_url = graphite_url
     sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals(
         )
     if options.compare_hour:
@@ -102,7 +103,7 @@ def get_query_data(graphite_url, metric, sum_type='sum'):
     total = {}
     for id, metric in metrics.items():
         local_duration = duration
-        url = "%(graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
+        url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
         resp = {}
         try:
             resp = requests.get(url, verify=False).json()
@@ -122,12 +123,12 @@ def get_query_data(graphite_url, metric, sum_type='sum'):
         'day_before', 0), 'week_before': total.get('week_before', 0)}
 
 
-def summarize_result(graphite_url, base_path, extra_metric='', sum_type='sum'):
+def summarize_result(base_path, extra_metric='', sum_type='sum'):
     results = {}
     do_types = {}
     # stats_counts.scheduler.production.i-60ac6a05.job_success.addcalendaritem
 
-    do_types = get_query_path(graphite_url, base_path)
+    do_types = get_query_path(base_path)
     if not do_types:
         return
 
@@ -141,7 +142,7 @@ def summarize_result(graphite_url, base_path, extra_metric='', sum_type='sum'):
         else:
             real_sum_type = sum_type
 
-        result = get_query_data(graphite_url, metric, real_sum_type)
+        result = get_query_data(metric, real_sum_type)
         if result:
             results[do_type] = result
     return results
