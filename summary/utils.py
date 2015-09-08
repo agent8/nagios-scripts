@@ -182,8 +182,8 @@ def summarize_total(title, results, order_do_types=None, order_by_name=None, sum
     return {'title': title, 'results': new_results}
 
 
-def summarize(graphite_url, base_path, title, order_do_types=None, extra_metric='', sum_type='sum', sum_total=True):
-    results = summarize_result(graphite_url, base_path, extra_metric, sum_type)
+def summarize(base_path, title, order_do_types=None, extra_metric='', sum_type='sum', sum_total=True):
+    results = summarize_result(base_path, extra_metric, sum_type)
 
     return summarize_total(title, results, order_do_types, sum_total=sum_total)
 
