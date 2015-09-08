@@ -6,8 +6,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from optparse import OptionParser
 try:
-    import urllib3
-    urllib3.disable_warnings()
     from requests.packages import urllib3
     urllib3.disable_warnings()
 except:
@@ -102,7 +100,7 @@ def get_query_data(metric, sum_type='sum'):
                }
     total = {}
     for id, metric in metrics.items():
-        local_duration = duration
+        local_duration = options.duration
         url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
         resp = {}
         try:
