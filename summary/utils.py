@@ -19,8 +19,7 @@ graphite_url = "https://edo_graphite_reader:very_secret@graphite.easilydo.com"
 
 
 duration = 60
-subject = 'Hourly Summary - ReturnPath'
-sub_title = 'Yesterday'
+subject = ''
 email_list = ['waiting@easilydo.com', 'ping@easilydo.com']
 
 parser = OptionParser()
@@ -31,7 +30,6 @@ parser.add_option("--subject",
                   dest="subject", default='',
                   help="Email Subject")
 parser.add_option('--emails', default='waiting@easilydo.com', dest="emails")
-parser.add_option('--sub_title', default='Yesterday', dest="sub_title")
 parser.add_option('--compare_hour', action='store_true', dest="compare_hour", default=False)
 
 
@@ -72,7 +70,7 @@ def get_avg(cache):
         except:
             continue
         total += float(point)
-
+    total /= len(cache['datapoints'])
     return total
 
 
@@ -114,7 +112,7 @@ def get_query_data(graphite_url, metric, sum_type='sum'):
         if not resp:
             continue
         if sum_type == 'avg':
-            total[id] = int(get_avg(resp))
+            total[id] = float(get_avg(resp))
         else:
             total[id] = int(get_total(resp))
 
@@ -217,7 +215,11 @@ def send_email(results_list):
         if not new_results:
             continue
 
-        content += "<br><table border=1><tr><td>%s</td><td>Last Hour</td><td>Hour Before</td><td>Change</td><td>2 Hour Before</td><td>Change</td></tr>" % (
+        if options.compare_hour:
+            content += "<br><table border=1><tr><td>%s</td><td>Last Hour</td><td>Hour Before</td><td>Change</td><td>2 Hour Before</td><td>Change</td></tr>" % (
+            results['title'], )
+        else:
+            content += "<br><table border=1><tr><td>%s</td><td>Yesterday</td><td>Day Before</td><td>Change</td><td>Week Before</td><td>Change</td></tr>" % (
             results['title'], )
 
         for key, count in new_results:
