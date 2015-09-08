@@ -108,7 +108,7 @@ def get_query_data(metric, sum_type='sum'):
         try:
             resp = requests.get(url, verify=False).json()
         except:
-            print "Could not get info from graphite server -%s %s %s" % (url, metric)
+            print "Could not get info from graphite server -%s %s" % (url, metric)
 
         if not resp:
             continue
