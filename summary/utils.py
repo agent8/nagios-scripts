@@ -26,13 +26,13 @@ email_list = ['waiting@easilydo.com', 'ping@easilydo.com']
 parser = OptionParser()
 
 parser.add_option("--duration", dest="duration",
-                  help="duration", default=1440)
+                  help="duration", type="int", default=1440)
 parser.add_option("--subject",
                   dest="subject", default='',
                   help="Email Subject")
 parser.add_option('--emails', default='waiting@easilydo.com', dest="emails")
 parser.add_option('--sub_title', default='Yesterday', dest="sub_title")
-parser.add_option('--compare_hour', action='store_true', dest="compare_hour", default=False)
+parser.add_option('--compare_hour', action='store_true', type="bool", dest="compare_hour", default=False)
 
 
 (options, args) = parser.parse_args()
@@ -211,7 +211,6 @@ def format_percent(current, past):
 
 
 def send_email(results_list):
-    title = subject
     content = ""
     for results in results_list:
         new_results = results['results']
@@ -245,7 +244,7 @@ def send_email(results_list):
 
 
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = title
+    msg['Subject'] = subject
     msg['From'] = from_email
 
     part2 = MIMEText(body, 'html')
