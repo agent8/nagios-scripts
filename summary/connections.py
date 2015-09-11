@@ -16,8 +16,8 @@ results_list = [
         summarize('stats_counts.do_engine.production.reconnected_connections.*.android.*', 'Android  ReConnection'),
         summarize('stats_counts.do_engine.production.*', 'All Locale', extra_metric='.*.*.*'),
 
-        summarize('stats.gauges.redis.production.processed_connections.en_US', 'en_US Processed Connections', extra_metric='.*.*'),
-        summarize('stats.gauges.redis.production.processed_connections.*.*.*', 'All Processed Connections'),
+        summarize('stats.gauges.redis.production.processed_connections.en_US', 'en_US Processed Connections', extra_metric='.*.*', sum_type='avg'),
+        summarize('stats.gauges.redis.production.processed_connections.*.*.*', 'All Processed Connections', sum_type='avg'),
         ]
 
 send_email(results_list)
