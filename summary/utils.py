@@ -72,6 +72,21 @@ def get_avg(cache):
     return total
 
 
+def get_latest(cache):
+    total = 0
+    cache = cache[0]
+
+    for point in cache['datapoints']:
+        try:
+            point = point[0]
+            if not point:
+                continue
+        except:
+            continue
+        return float(point)
+    return total
+
+
 def get_query_path(base_path):
     local_graphite_url = graphite_url
     url = '%(local_graphite_url)s/metrics/find?query=%(base_path)s' % locals()
@@ -110,6 +125,8 @@ def get_query_data(metric, sum_type='sum'):
 
         if not resp:
             continue
+        if sum_type == 'latest':
+            total[id] = int(get_latest(resp))
         if sum_type == 'avg':
             total[id] = int(get_avg(resp))
         else:
