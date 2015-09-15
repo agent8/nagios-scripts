@@ -101,8 +101,11 @@ def get_query_path(base_path):
 
 def get_query_data(metric, sum_type='sum'):
     local_graphite_url = graphite_url
-    sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals(
-        )
+
+    if sum_type == 'latest':
+        sum_metrics = '%(metric)s' % locals()
+    else:
+        sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals()
     if options.compare_hour:
         metrics = {"yesterday": sum_metrics,
            "day_before": "timeShift(%(sum_metrics)s,'-1h')" % locals(),
@@ -117,6 +120,7 @@ def get_query_data(metric, sum_type='sum'):
     for id, metric in metrics.items():
         local_duration = options.duration
         url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
+        print url
         resp = {}
         try:
             resp = requests.get(url, verify=False).json()
