@@ -103,9 +103,10 @@ def get_query_data(metric, sum_type='sum'):
     local_graphite_url = graphite_url
 
     if sum_type == 'latest':
-        sum_metrics = '%(metric)s' % locals()
+        sum_metrics = metric
     else:
         sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals()
+
     if options.compare_hour:
         metrics = {"yesterday": sum_metrics,
            "day_before": "timeShift(%(sum_metrics)s,'-1h')" % locals(),
@@ -154,7 +155,7 @@ def summarize_result(base_path, extra_metric='', sum_type='sum'):
     for item in do_types:
         do_type = item['text']
         item_id = item['id']
-        metric = '%(item_id)s%(extra_metric)s)' % locals()
+        metric = '%(item_id)s%(extra_metric)s' % locals()
 
         if isinstance(sum_type, dict):
             real_sum_type = sum_type.get(do_type, sum_type.get('', 'sum'))
