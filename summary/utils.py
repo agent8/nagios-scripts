@@ -138,8 +138,8 @@ def get_query_data(metric, sum_type='sum'):
 
         if not total[id]:
             total[id] = 0
-    return {'yesterday': total.get('yesterday', 0), 'day_before': total.get(
-        'day_before', 0), 'week_before': total.get('week_before', 0)}
+    return {'yesterday': total.get('yesterday', 0) or 0, 'day_before': total.get(
+        'day_before', 0) or 0, 'week_before': total.get('week_before', 0) or 0}
 
 
 def summarize_result(base_path, extra_metric='', sum_type='sum'):
