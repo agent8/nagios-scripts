@@ -140,10 +140,11 @@ def get_query_data(metric, sum_type='sum'):
             continue
         if sum_type == 'latest':
             total[id] = int(get_latest(resp))
-        if sum_type == 'avg':
-            total[id] = int(get_avg(resp))
         else:
-            total[id] = int(get_total(resp))
+            if sum_type == 'avg':
+                total[id] = int(get_avg(resp))
+            else:
+                total[id] = int(get_total(resp))
 
         if not total[id]:
             total[id] = 0
