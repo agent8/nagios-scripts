@@ -107,12 +107,14 @@ def get_query_data(metric, sum_type='sum'):
         sum_metrics = metric
     else:
         sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals()
+    local_duration = options.duration
 
     if options.compare_hour or sum_type == 'latest':
         metrics = {"yesterday": sum_metrics,
            "day_before": "timeShift(%(sum_metrics)s,'-1h')" % locals(),
            "week_before": "timeShift(%(sum_metrics)s,'-2h')" % locals()
            }
+        local_duration = 60
     else:
         metrics = {"yesterday": sum_metrics,
                "day_before": "timeShift(%(sum_metrics)s,'-1d')" % locals(),
@@ -120,7 +122,6 @@ def get_query_data(metric, sum_type='sum'):
                }
     total = {}
     for id, metric in metrics.items():
-        local_duration = options.duration
         url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
         print 'sum_metrics>>>', url
         resp = {}
