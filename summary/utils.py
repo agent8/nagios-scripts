@@ -125,7 +125,10 @@ def get_query_data(metric, sum_type='sum'):
                }
     total = {}
     for id, metric in metrics.items():
-        url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
+        if sum_type == 'latest':
+            url = "%(local_graphite_url)s/render?target=%(metric)s&format=json" % locals()
+        else:
+            url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
         print 'sum_metrics>>>', url
         resp = {}
         try:
