@@ -104,7 +104,7 @@ def get_query_data(metric, sum_type='sum'):
     local_graphite_url = graphite_url
 
     if sum_type == 'latest':
-        sum_metrics = metric
+        sum_metrics = "sumSeries(sum(%(metric)s))" % locals()
     else:
         sum_metrics = "sumSeries(%(sum_type)s(%(metric)s))" % locals()
     local_duration = options.duration
