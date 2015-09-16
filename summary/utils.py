@@ -106,7 +106,7 @@ def get_query_data(metric, sum_type='sum'):
     if sum_type == 'latest':
         sum_metrics = metric
     else:
-        sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals()
+        sum_metrics = "sumSeries(%(sum_type)s(%(metric)s))" % locals()
     local_duration = options.duration
 
     if sum_type == 'latest':
