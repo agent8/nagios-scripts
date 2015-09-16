@@ -90,6 +90,7 @@ def get_latest(cache):
 def get_query_path(base_path):
     local_graphite_url = graphite_url
     url = '%(local_graphite_url)s/metrics/find?query=%(base_path)s' % locals()
+    print 'query path>>>', url
     try:
         res = requests.get(url, verify=False)
         return res.json()
@@ -121,6 +122,7 @@ def get_query_data(metric, sum_type='sum'):
     for id, metric in metrics.items():
         local_duration = options.duration
         url = "%(local_graphite_url)s/render?target=%(metric)s&from=-%(local_duration)smin&format=json" % locals()
+        print 'sum_metrics>>>', url
         resp = {}
         try:
             resp = requests.get(url, verify=False).json()
