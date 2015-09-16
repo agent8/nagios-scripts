@@ -109,7 +109,10 @@ def get_query_data(metric, sum_type='sum'):
         sum_metrics = "sumSeries(%(sum_type)s(%(metric)s)" % locals()
     local_duration = options.duration
 
-    if options.compare_hour or sum_type == 'latest':
+    if sum_type == 'latest':
+        local_duration = 60
+
+    if options.compare_hour:
         metrics = {"yesterday": sum_metrics,
            "day_before": "timeShift(%(sum_metrics)s,'-1h')" % locals(),
            "week_before": "timeShift(%(sum_metrics)s,'-2h')" % locals()
