@@ -3,14 +3,20 @@
 from utils import *
 
 results_list = [
-        summarize('stats_counts.do_engine.production.new_connections.platform.ios.*', 'iOS New Connection'),
-        summarize('stats_counts.do_engine.production.new_connections.platform.android.*', 'Android New Connection'),
-        summarize('stats_counts.do_engine.production.locale.en_US.*', 'en_US'),
-        summarize('stats_counts.do_engine.production.expired_connections.platform.ios.*', 'iOS Expired Connection'),
-        summarize('stats_counts.do_engine.production.expired_connections.platform.android.*', 'Android Expired Connection'),
-        summarize('stats_counts.do_engine.production.reconnected_connections.platform.ios.*', 'iOS  ReConnection'),
-        summarize('stats_counts.do_engine.production.reconnected_connections.platform.android.*', 'Android  ReConnection'),
-        summarize('stats_counts.do_engine.production.locale.other.*', 'Other Locale'),
+        summarize('stats_counts.do_engine.production.new_connections.platform.ios.*', 'iOS New Connections'),
+        summarize('stats_counts.do_engine.production.new_connections.platform.android.*', 'Android New Connections'),
+        summarize('stats_counts.do_engine.production.new_connections.locale.en_US.*', 'en_US New Connections'),
+        summarize('stats_counts.do_engine.production.expired_connections.platform.ios.*', 'iOS Expired Connections'),
+        summarize('stats_counts.do_engine.production.expired_connections.platform.android.*', 'Android Expired Connections'),
+        summarize('stats_counts.do_engine.production.expired_connections.locale.en_US.*', 'en_US Expired Connections'),
+        
+        summarize('stats_counts.do_engine.production.reconnected_connections.platform.ios.*', 'iOS  ReConnections'),
+        summarize('stats_counts.do_engine.production.reconnected_connections.platform.android.*', 'Android  ReConnections'),
+        summarize('stats_counts.do_engine.production.reconnected_connections.locale.en_US.*', 'en_US ReConnections'),
+        
+        summarize('stats_counts.do_engine.production.new_connections.locale.other.*', 'Other Locale New Connections'),
+        summarize('stats_counts.do_engine.production.expired_connections.locale.other.*', 'Other Locale Expired Connections'),
+        summarize('stats_counts.do_engine.production.reconnected_connections.locale.other.*', 'Other Locale ReConnections'),
 
         summarize('stats.gauges.redis.production.processed_connections.en_US.*.*', 'en_US Processed Connections', sum_type='latest'),
         summarize('stats.gauges.redis.production.processed_connections.*.*.*', 'All Processed Connections', sum_type='latest'),

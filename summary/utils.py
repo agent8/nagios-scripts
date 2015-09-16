@@ -149,6 +149,7 @@ def summarize_result(base_path, extra_metric='', sum_type='sum'):
 
     do_types = get_query_path(base_path)
     if not do_types:
+        print 'not found metric', base_path
         return
 
     for item in do_types:
