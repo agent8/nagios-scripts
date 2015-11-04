@@ -40,14 +40,13 @@ activeuser_order = [
 
 def summarize_message():
     base_path = 'stats_counts.worker.production.*.mailhandler'
-    do_types = get_query_path(graphite_url, "%(base_path)s.*" % locals())
+    do_types = get_query_path("%(base_path)s.*" % locals())
 
     results = {}
     for x in do_types:
         txt = x['text']
         results.update(summarize_result(
             "%(base_path)s.%(txt)s.*" % locals(), '', 'sum', txt))
-    end
 
     return summarize_total('Classify Process Message', results)
 
