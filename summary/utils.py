@@ -289,9 +289,10 @@ def send_email(results_list):
     smtpserver.ehlo
     smtpserver.login(from_email, 'secret008')
 
-    for to in options.emails.split(','):
-        msg['To'] = to
-        smtpserver.sendmail(from_email, to, msg.as_string())
+    emails = options.emails.split(',')
+    msg['To'] = emails[0]
+    msg['CC'] = emails[1:]
+    smtpserver.sendmail(from_email, emails, msg.as_string())
 
     smtpserver.close()
 
