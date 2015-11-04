@@ -45,9 +45,14 @@ def summarize_message():
     results = {}
     for x in do_types:
         txt = x['text']
-        results.update(summarize_result(
-            "%(base_path)s.%(txt)s.*" % locals(), '', 'sum', txt))
-
+        try:
+            result = summarize_result(
+                "%(base_path)s.%(txt)s.*" % locals(), '', 'sum', txt + ' ')
+            if result:
+                results.update(result)
+        except:
+            import traceback; traceback.print_exc();
+            pass
     return summarize_total('Classify Process Message', results)
 
 

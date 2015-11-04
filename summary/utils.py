@@ -152,7 +152,7 @@ def get_query_data(metric, sum_type='sum'):
         'day_before', 0) or 0, 'week_before': total.get('week_before', 0) or 0}
 
 
-def summarize_result(base_path, extra_metric='', sum_type='sum'):
+def summarize_result(base_path, extra_metric='', sum_type='sum', do_type_prefix=''):
     results = {}
     do_types = {}
     # stats_counts.scheduler.production.i-60ac6a05.job_success.addcalendaritem
@@ -163,7 +163,7 @@ def summarize_result(base_path, extra_metric='', sum_type='sum'):
         return
 
     for item in do_types:
-        do_type = item['text']
+        do_type = do_type_prefix + item['text']
         item_id = item['id']
         metric = '%(item_id)s%(extra_metric)s' % locals()
 
@@ -232,7 +232,7 @@ def format_percent(current, past):
         color = 'red'
 
     str_percent = '%.2f' % percent_change
-    html = "<font color='%(str_percent)s'>%(str_percent)s %%</font>" % locals()
+    html = "<font color='%(color)s'>%(str_percent)s %%</font>" % locals()
     if flag:
         html = "<b>%(html)s</b>" % locals()
 
