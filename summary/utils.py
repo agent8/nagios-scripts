@@ -291,7 +291,7 @@ def send_email(results_list):
 
     emails = options.emails.split(',')
     msg['To'] = emails[0]
-    msg['CC'] = emails[1:]
+    msg['CC'] = ','.join(emails[1:])
     smtpserver.sendmail(from_email, emails, msg.as_string())
 
     smtpserver.close()
