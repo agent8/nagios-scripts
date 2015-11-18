@@ -18,8 +18,10 @@ results_list = [
         summarize('stats_counts.do_engine.production.expired_connections.locale.other.*', 'Other Locale Expired Connections'),
         summarize('stats_counts.do_engine.production.reconnected_connections.locale.other.*', 'Other Locale ReConnections'),
 
-        summarize('stats.gauges.redis.production.processed_connections.en_US.*.*', 'en_US Processed Connections', sum_type='latest'),
-        summarize('stats.gauges.redis.production.processed_connections.*.*.*', 'All Processed Connections', sum_type='latest'),
+        summarize('stats.gauges.logs.worker.production.*.returnpath.returnpath*', 'Unique User', sum_type='latest', extra_metric='.unique_user'),
+        summarize('stats_counts.job_server.production.*.total_submitted_jobs.returnpath*',
+              'Total Submitted Jobs'),
+    
         ]
 
 send_email(results_list)
