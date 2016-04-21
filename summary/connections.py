@@ -18,7 +18,7 @@ results_list = [
         summarize('stats_counts.do_engine.production.expired_connections.locale.other.*', 'Other Locale Expired Connections'),
         summarize('stats_counts.do_engine.production.reconnected_connections.locale.other.*', 'Other Locale ReConnections'),
 
-        summarize('stats.gauges.logs.worker.production.*.returnpath.returnpath*', 'Unique User', sum_type='latest', extra_metric='.unique_user'),
+        summarize2('%returnpath.returnpath%', 'Unique User', name_index=-2),
         summarize('stats_counts.job_server.production.*.total_submitted_jobs.returnpath*',
               'Total Submitted Jobs'),
     
