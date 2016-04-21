@@ -194,7 +194,7 @@ def summarize_total(title, results, order_do_types=None, order_by_name=None, sum
             new_results += sorted(results.items(),
                                   key=lambda x: x[1]['yesterday'] or 0, reverse=True)
     else:
-        new_results = sorted(results.items(), key=lambda x: x[1])
+        new_results = sorted(results.items(), key=lambda x: x[0])
 
     if sum_total:
         total_count = {'yesterday': 0, 'day_before': 0, 'week_before': 0}
