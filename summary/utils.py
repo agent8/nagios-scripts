@@ -228,6 +228,14 @@ def summarize2(base_path, title, order_do_types=None, sum_total=1, name_index=-1
     return summarize_total(title, res.json(), order_do_types, sum_total=sum_total)
 
 
+def summarize3(base_path, title, order_do_types=None, sum_total=1, name_index=-1):
+    url = '/get_daily_summary/?group=%s&sum_total=0&date=%s' % (base_path, name_index, options.date)
+    url = discovery_tools_url + url
+    print url
+    res = requests.get(url)
+
+    return summarize_total(title, res.json(), order_do_types, sum_total=sum_total)
+
 
 def format_percent(current, past):
     color = 'green'
