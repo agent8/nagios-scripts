@@ -10,7 +10,7 @@ results_list = [
     #summarize('stats_counts.worker.production.i-28ea5aa1.returnpath.*classify', 'Unique User', extra_metric='.finish_all_process'),
     summarize('stats_counts.job_server.production.*.total_submitted_jobs.returnpath*',
               'Total Submitted Jobs'),
-    summarize('stats_counts.worker.production.*.returnpath.*classify', 'Message', extra_metric='.messages'),
+    #summarize('stats_counts.worker.production.*.returnpath.*classify', 'Message', extra_metric='.messages'),
     #summarize('stats_counts.worker.production.*.returnpath.*classify', 'Process Day', extra_metric='.process_day')
      ]
 

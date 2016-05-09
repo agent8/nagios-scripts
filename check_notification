@@ -3,7 +3,7 @@
 email=waiting.test@gmail.com
 subject="Notification check on `date +'%Y-%m-%d %H:%M:%S'`"
 echo $subject
-echo "$subject" | mail -s "$subject" $email
+echo "$subject" | mail -s "Notification check" $email
 
 sleep 20
 total=0
