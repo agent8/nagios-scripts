@@ -242,7 +242,7 @@ def summarize3(base_path, title, sum_total=1):
 
 def format_percent(current, past):
     if past:
-        percent = (current / float(past)) * 100.0
+        percent = round((current / float(past)) * 100.0, 0)
     else:
         percent = 100
 
