@@ -271,7 +271,7 @@ def send_email(results_list):
             count['percent'] = percent_html
             count['percent_week'] = percent_html_week
 
-    content = tpl.generate(results_list=results_list, options=options)
+    body = tpl.generate(results_list=results_list, options=options)
 
     from_email = 'developer@easilydo.com'
 
