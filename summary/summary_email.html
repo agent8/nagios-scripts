@@ -28,20 +28,23 @@
                     <td>{{ key }}</td>
                     <td>{{ count['yesterday'] }}</td>
                     <td>{{ count['day_before'] }}</td>
+                    {% set percent = count['percent'] %}
                     <td>{% if percent > 130 or percent < 50 %}<b>{% end %}
                         {% if percent > 100 %}<font color='green'>{% end %}
                         {% if percent <= 100 %}<font color='red'>{% end %}
                         
-                        {{ count['percent'] - 100 }}%
+                        {{ percent - 100 }}%
                         </font>
                         {% if percnet > 130 or percent < 50 %}</b>{% end %}
                     </td>
                     <td>{{ count['week_before'] }}</td>
+                    {% set percent = count['percent_week'] %}
+                    
                     <td>{% if percent > 130 or percent < 50 %}<b>{% end %}
                         {% if percent > 100 %}<font color='green'>{% end %}
                         {% if percent <= 100 %}<font color='red'>{% end %}
                         
-                        {{ count['percent_week'] - 100 }}%
+                        {{ percent - 100 }}%
                         </font>
                         {% if percnet > 130 or percent < 50 %}</b>{% end %}
                     </td>
