@@ -241,24 +241,12 @@ def summarize3(base_path, title, sum_total=1):
 
 
 def format_percent(current, past):
-    color = 'green'
-    flag = False
     if past:
         percent = (current / float(past)) * 100.0
-        flag = (percent > 130 or percent < 50)
-        percent_change = percent - 100
     else:
-        percent_change = 0
+        percent = 100
 
-    if percent_change < 0:
-        color = 'red'
-
-    str_percent = '%.2f' % percent_change
-    html = "<font color='%(color)s'>%(str_percent)s %%</font>" % locals()
-    if flag:
-        html = "<b>%(html)s</b>" % locals()
-
-    return html
+    return percent
 
 
 template_file = os.path.dirname(__file__) + '/summary_email.html'
@@ -280,8 +268,8 @@ def send_email(results_list):
             percent_html = format_percent(yesterday, day_before)
             percent_html_week = format_percent(yesterday, week_before)
             
-            count['percent_html'] = percent_html
-            count['percent_html_week'] = percent_html_week
+            count['percent'] = percent_html
+            count['percent_week'] = percent_html_week
 
     content = tpl.generate(results_list=results_list, options=options)
 
