@@ -35,7 +35,7 @@
                         
                         {{ percent - 100 }}%
                         </font>
-                        {% if percnet > 130 or percent < 50 %}</b>{% end %}
+                        {% if percent > 130 or percent < 50 %}</b>{% end %}
                     </td>
                     <td>{{ count['week_before'] }}</td>
                     {% set percent = count['percent_week'] %}
@@ -46,7 +46,7 @@
                         
                         {{ percent - 100 }}%
                         </font>
-                        {% if percnet > 130 or percent < 50 %}</b>{% end %}
+                        {% if percent > 130 or percent < 50 %}</b>{% end %}
                     </td>
                 </tr>
             {% end %}
