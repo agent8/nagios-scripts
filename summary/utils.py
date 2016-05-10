@@ -2,6 +2,8 @@
 # coding=utf8
 import requests
 import smtplib
+import os
+import os.path
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from optparse import OptionParser
@@ -10,6 +12,7 @@ try:
     urllib3.disable_warnings()
 except:
     pass
+from tornado import template
 
 discovery_tools_url = 'https://discovery-tools-staging.easilydo.com/metrics'
 
@@ -258,39 +261,29 @@ def format_percent(current, past):
     return html
 
 
+template_file = os.path.dirname(__file__) + '/summary_email.html'
+
 def send_email(results_list):
     content = ""
+    template_string = file(template_file).read()
+    tpl = template.Template(template_string)
     for results in results_list:
         new_results = results['results']
         if not new_results:
             continue
 
-        if options.compare_hour:
-            content += "<br><table border=1><tr><td>%s</td><td>Last Hour</td><td>Hour Before</td><td>Change</td><td>2 Hour Before</td><td>Change</td></tr>" % (
-            results['title'], )
-        else:
-            content += "<br><table border=1><tr><td>%s</td><td>Yesterday</td><td>Day Before</td><td>Change</td><td>Week Before</td><td>Change</td></tr>" % (
-            results['title'], )
-
         for key, count in new_results:
-            #count = results['results'][key]
             yesterday = count['yesterday']
             day_before = count['day_before']
             week_before = count['week_before']
 
             percent_html = format_percent(yesterday, day_before)
             percent_html_week = format_percent(yesterday, week_before)
-            content += "<tr><td>%(key)s</td><td>%(yesterday)s</td><td>%(day_before)s</td><td>%(percent_html)s</td><td>%(week_before)s</td><td>%(percent_html_week)s</td></tr>" % locals()
+            
+            count['percent_html'] = percent_html
+            count['percent_html_week'] = percent_html_week
 
-        content += "</table><hr><br>"
-
-    body = """<html>
-<body>
-%s
-</body>
-</html>
-""" % (content,)
-
+    content = tpl.generate(results_list=results_list, options=options)
 
     from_email = 'developer@easilydo.com'
 

@@ -1,0 +1,41 @@
+<html>
+    <body>
+        {% for results in results_list %}
+            <br>
+            {% if options.compare_hour %}
+            <table border="1">
+                <tr>
+                    <td>{{ results['title'] }}</td>
+                    <td>Last Hour</td>
+                    <td>Hour Before</td>
+                    <td>Change</td>
+                    <td>2 Hour Before</td>
+                    <td>Change</td>
+                </tr>
+            {% else %}
+            <table border="1">
+                <tr>
+                    <td>{{ results['title'] }}</td>
+                    <td>Yesterday</td>
+                    <td>Day Before</td>
+                    <td>Change</td>
+                    <td>Week Before</td>
+                    <td>Change</td>
+                </tr>
+            {% end %}
+            {% for key, count in results['results'] %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ count['yesterday'] }}</td>
+                    <td>{{ count['day_before'] }}</td>
+                    <td>{{ percent_html }}</td>
+                    <td>{{ count['week_before'] }}</td>
+                    <td>{{ count['percent_html_week'] }}</td>
+                </tr>
+            {% end %}
+            </table>
+            <hr>
+        <br>
+    {% end %}
+</body>
+</html>
