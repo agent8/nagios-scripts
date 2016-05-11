@@ -45,7 +45,7 @@
                         {% if percent > 100 %}<font color='green'>{% end %}
                         {% if percent <= 100 %}<font color='red'>{% end %}
                         
-                        {{ count['day_before'] - count['yesterday'] }}
+                        {{ count['yesterday'] - count['day_before'] }}
                         </font>
                         {% if percent > 130 or percent < 50 %}</b>{% end %}
                     </td>
@@ -65,7 +65,7 @@
                         {% if percent > 100 %}<font color='green'>{% end %}
                         {% if percent <= 100 %}<font color='red'>{% end %}
                         
-                        {{ count['week_before'] - count['yesterday'] }}
+                        {{ count['yesterday'] - count['week_before'] }}
                         </font>
                         {% if percent > 130 or percent < 50 %}</b>{% end %}
                     </td>
