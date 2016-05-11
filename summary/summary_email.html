@@ -9,8 +9,10 @@
                     <td>Last Hour</td>
                     <td>Hour Before</td>
                     <td>Change</td>
+                    <td>Delta</td>
                     <td>2 Hour Before</td>
                     <td>Change</td>
+                    <td>Delta</td>
                 </tr>
             {% else %}
             <table border="1">
@@ -19,8 +21,10 @@
                     <td>Yesterday</td>
                     <td>Day Before</td>
                     <td>Change</td>
+                    <td>Delta</td>
                     <td>Week Before</td>
                     <td>Change</td>
+                    <td>Delta</td>
                 </tr>
             {% end %}
             {% for key, count in results['results'] %}
@@ -37,6 +41,15 @@
                         </font>
                         {% if percent > 130 or percent < 50 %}</b>{% end %}
                     </td>
+                    <td>{% if percent > 130 or percent < 50 %}<b>{% end %}
+                        {% if percent > 100 %}<font color='green'>{% end %}
+                        {% if percent <= 100 %}<font color='red'>{% end %}
+                        
+                        {{ count('day_before') - count('yesterday') }}
+                        </font>
+                        {% if percent > 130 or percent < 50 %}</b>{% end %}
+                    </td>
+                    
                     <td>{{ count['week_before'] }}</td>
                     {% set percent = count['percent_week'] %}
                     
@@ -45,6 +58,14 @@
                         {% if percent <= 100 %}<font color='red'>{% end %}
                         
                         {{ percent - 100 }}%
+                        </font>
+                        {% if percent > 130 or percent < 50 %}</b>{% end %}
+                    </td>
+                    <td>{% if percent > 130 or percent < 50 %}<b>{% end %}
+                        {% if percent > 100 %}<font color='green'>{% end %}
+                        {% if percent <= 100 %}<font color='red'>{% end %}
+                        
+                        {{ count('week_before') - count('yesterday') }}
                         </font>
                         {% if percent > 130 or percent < 50 %}</b>{% end %}
                     </td>
