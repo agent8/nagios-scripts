@@ -59,26 +59,26 @@ def summarize_message():
 results_list = [
     summarize3('Discovery', order_do_types=discovery_order_dotypes),
 
-    summarize('Scheduler Jobs'),
-    summarize('Scheduler Tasks'),
-    summarize('Notifications Android', order_do_types=push_order_dotypes),
-    summarize('Notifications iOS', order_do_types=push_order_dotypes),
+    summarize3('Scheduler Jobs'),
+    summarize3('Scheduler Tasks'),
+    summarize3('Notifications Android', order_do_types=push_order_dotypes),
+    summarize3('Notifications iOS', order_do_types=push_order_dotypes),
     summarize('stats.gauges.dynamodb.prod-ActiveUsers*',
               'Active User Count', activeuser_order, '.item_count', 'avg'),
-    summarize('Error Log Num'),
+    summarize3('Error Log Num'),
 
     summarize('stats_counts.worker.production.*.tms.*',
               'TMS Success', None, '.SUCCESS'),
     summarize('stats_counts.worker.production.*.tms.*',
               'TMS Fail', None, '.FAIL'),
-    summarize('Nginx Status'),
-    summarize('Total Submitted Jobs'),
+    summarize3('Nginx Status'),
+    summarize3('Total Submitted Jobs'),
     summarize('stats_counts.worker.production.*.*',
               'Begin Process', None, '.begin_process'),
     summarize('stats_counts.worker.production.*.*',
               'Finish Process', None, '.finish_process'),
 
-    summarize('Total Process Message'),
+    summarize3('Total Process Message'),
     summarize_message(),
     summarize('stats_counts.easilydo_profiling.production.*.flashback.promo.*', 'CatchAll Invite')
 ]
