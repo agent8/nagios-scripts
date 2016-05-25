@@ -12,6 +12,7 @@ results_list = [
     summarize3('Open Nginx', 'Open Nginx'),
     summarize3('Flight Worker', 'Flight Worker'),
     summarize3('Shipment Worker', 'Shipment Worker'),
+    summarize3('Api Service', 'Api Service'),
      ]
 
 send_email(results_list)
