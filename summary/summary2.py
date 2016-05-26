@@ -38,24 +38,6 @@ activeuser_order = [
 ]
 
 
-def summarize_message():
-    base_path = 'stats_counts.worker.production.*.mailhandler'
-    do_types = get_query_path("%(base_path)s.*" % locals())
-
-    results = {}
-    for x in do_types:
-        txt = x['text']
-        try:
-            result = summarize_result(
-                "%(base_path)s.%(txt)s.*" % locals(), '', 'sum', txt + ' ')
-            if result:
-                results.update(result)
-        except:
-            import traceback; traceback.print_exc();
-            pass
-    return summarize_total('Classify Process Message', results)
-
-
 results_list = [
     summarize3('Discovery', order_do_types=discovery_order_dotypes),
 
@@ -67,20 +49,16 @@ results_list = [
               'Active User Count', activeuser_order, '.item_count', 'avg'),
     summarize3('Error Log Num'),
 
-    summarize('stats_counts.worker.production.*.tms.*',
-              'TMS Success', None, '.SUCCESS'),
-    summarize('stats_counts.worker.production.*.tms.*',
-              'TMS Fail', None, '.FAIL'),
+    summarize3('TMS Success'),
+    summarize3('TMS Fail'),
     summarize3('Nginx Status'),
     summarize3('Total Submitted Jobs'),
-    summarize('stats_counts.worker.production.*.*',
-              'Begin Process', None, '.begin_process'),
-    summarize('stats_counts.worker.production.*.*',
-              'Finish Process', None, '.finish_process'),
+    summarize3('Begin Process'),
+    summarize3('Finish Process'),
 
     summarize3('Total Process Message'),
-    summarize_message(),
-    summarize('stats_counts.easilydo_profiling.production.*.flashback.promo.*', 'CatchAll Invite')
+    summarize3('Classify Process Message'),
+    summarize3('CatchAll Invite')
 ]
 
 send_email(results_list)
