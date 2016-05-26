@@ -45,8 +45,7 @@ results_list = [
     summarize3('Scheduler Tasks'),
     summarize3('Notifications Android', order_do_types=push_order_dotypes),
     summarize3('Notifications iOS', order_do_types=push_order_dotypes),
-    summarize('stats.gauges.dynamodb.prod-ActiveUsers*',
-              'Active User Count', activeuser_order, '.item_count', 'avg'),
+    summarize3('Active User Count', order_do_types=activeuser_order),
     summarize3('Error Log Num'),
 
     summarize3('TMS Success'),
