@@ -239,7 +239,7 @@ def summarize3(base_path, title=None, sum_total=1, order_do_types=None):
     print url
     res = requests.get(url)
 
-    return summarize_total(title, res.json(), order_do_types=order_do_types, order_by_name=True, sum_total=sum_total)
+    return summarize_total(title, res.json(), order_do_types=order_do_types, sum_total=sum_total)
 
 
 def format_percent(current, past):
