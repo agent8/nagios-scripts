@@ -70,11 +70,6 @@ results_list = [
     summarize('stats.gauges.dynamodb.prod-ActiveUsers*',
               'Active User Count', activeuser_order, '.item_count', 'avg'),
     summarize('stats_counts.log_center.production.error_log.*', 'Error Log Num'),
-
-    summarize('stats_counts.worker.production.*.tms.*',
-              'TMS Success', None, '.SUCCESS'),
-    summarize('stats_counts.worker.production.*.tms.*',
-              'TMS Fail', None, '.FAIL'),
     summarize('stats_counts.nginx.production.response_error.*', 'Nginx Status'),
     summarize('stats_counts.job_server.production.*.total_submitted_jobs.*',
               'Total Submitted Jobs'),
