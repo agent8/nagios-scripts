@@ -47,9 +47,6 @@ results_list = [
     summarize3('Notifications iOS', order_do_types=push_order_dotypes),
     summarize3('Active User Count', order_do_types=activeuser_order),
     summarize3('Error Log Num'),
-
-    summarize3('TMS Success'),
-    summarize3('TMS Fail'),
     summarize3('Nginx Status'),
     summarize3('Total Submitted Jobs'),
     summarize3('Begin Process'),
