@@ -14,7 +14,7 @@ except:
     pass
 from tornado import template
 
-discovery_tools_url = 'https://discovery-tools-staging.easilydo.com/metrics'
+discovery_tools_url = 'https://discovery-tools.easilydo.com/metrics'
 
 graphite_url = "https://edo_graphite_reader:very_secret@graphite.easilydo.com"
 
