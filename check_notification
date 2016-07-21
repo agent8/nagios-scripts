@@ -7,15 +7,34 @@ echo "$subject" | mail -s "Notification check" $email
 
 sleep 20
 total=0
-for var in "$@"
-do
-    echo $var
-    cmd="grep '$subject' /var/log/easilydo/push_offline.log"
-    echo $cmd
-    ret=`echo "$cmd" | ssh web_tools@$var -i /home/easilydo_deploy/.ssh/id_ras_web_tools "bash -s"  | grep "$email" | grep "Send payload" | grep "resp: 200" | wc -l`
-    echo $ret
-    total=$(echo $total + $ret | bc) 
-done
+
+var='10.1.31.66'
+target_file="/var/log/logstash/production/push_notifications_server/push_offline/`date +'%Y-%m-%d'`/`date +'%H'`/*"
+cmd="grep '$subject' $target_file"
+echo $var
+echo $cmd
+ret=`echo "$cmd" | ssh web_tools@$var -i /home/easilydo_deploy/.ssh/id_ras_web_tools "bash -s"  | grep "$email" | grep "Send payload" | grep "resp: 200" | wc -l`
+echo $ret
+total=$(echo $total + $ret | bc) 
+
+if [ $total -eq 0 ]
+then
+    for var in "$@"
+    do
+        echo $var
+        cmd="grep '$subject' /var/log/easilydo/push_offline.log"
+        echo $cmd
+        ret=`echo "$cmd" | ssh web_tools@$var -i /home/easilydo_deploy/.ssh/id_ras_web_tools "bash -s"  | grep "$email" | grep "Send payload" | grep "resp: 200" | wc -l`
+        echo $ret
+        total=$(echo $total + $ret | bc) 
+        if [ $total -eq 0 ]
+        then
+            continue
+        else
+            break
+        fi
+    done
+fi
 echo $total
 
 if [ $total -eq 0 ]
