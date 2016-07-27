@@ -8,7 +8,7 @@ echo "$subject" | mail -s "Notification check" $email
 sleep 20
 total=0
 
-var='10.1.31.66'
+var='10.1.30.121'
 target_file="/var/log/logstash/production/push_notifications_server/push_offline/`date +'%Y-%m-%d'`/`date +'%H'`/*"
 cmd="grep '$subject' $target_file"
 echo $cmd
