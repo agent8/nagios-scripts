@@ -5,7 +5,7 @@ subject="Notification check on `date +'%Y-%m-%d %H:%M:%S'`"
 echo $subject
 echo "$subject" | mail -s "Notification check" $email
 
-sleep 20
+sleep 30
 total=0
 
 var='10.1.30.121'
