@@ -54,7 +54,6 @@ results_list = [
 
     summarize3('Total Process Message'),
     summarize3('Classify Process Message'),
-    summarize3('CatchAll Invite')
 ]
 
 send_email(results_list)

@@ -81,7 +81,6 @@ results_list = [
     summarize('stats_counts.worker.production.*.mailhandler.*.*',
               'Total Process Message'),
     summarize_message(),
-    summarize('stats_counts.easilydo_profiling.production.*.flashback.promo.*', 'CatchAll Invite')
 ]
 
 send_email(results_list)
