@@ -8,6 +8,7 @@ results_list = [
     #summarize('stats.gauges.logs.worker.production.i-28ea5aa1.returnpath.returnpath*', 'Unique User', sum_type='latest', extra_metric='.unique_user'),
     summarize3('ReturnPath'),
     summarize3('ReturnPathToken'),
+    summarize3('ReturnPathUserStatus'),
     summarize3('TotalReceipts'),
     summarize3('Total Submitted ReturnPath Jobs'),
     #summarize('stats_counts.worker.production.i-28ea5aa1.returnpath.*classify', 'Unique User', extra_metric='.finish_all_process'),
