@@ -6,7 +6,7 @@ from utils import *
 #stats_counts.returnpath_worker-python_worker_manager.production.i-92e03e32.returnpath.returnpath-gmail-classify.messages
 results_list = [
     #summarize('stats.gauges.logs.worker.production.i-28ea5aa1.returnpath.returnpath*', 'Unique User', sum_type='latest', extra_metric='.unique_user'),
-    summarize3('ReturnPathClassify'),
+    summarize3('ReturnPath'),
     summarize3('ReturnPathToken'),
     summarize3('ReturnPathUserStatus'),
     summarize3('TotalReceipts'),
