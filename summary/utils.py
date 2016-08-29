@@ -231,7 +231,7 @@ def summarize2(base_path, title, order_do_types=None, sum_total=1, name_index=-1
     return summarize_total(title, res.json(), order_do_types, sum_total=sum_total)
 
 
-def summarize3(base_path, title=None, sum_total=1, order_do_types=None):
+def summarize3(base_path, title=None, sum_total=1, order_do_types=None, order_by_name=None):
     if not title:
         title = base_path
     url = '/get_daily_summary/?group=%s&sum_total=0&date=%s' % (base_path, options.date)
@@ -239,7 +239,7 @@ def summarize3(base_path, title=None, sum_total=1, order_do_types=None):
     print url
     res = requests.get(url)
 
-    return summarize_total(title, res.json(), order_do_types=order_do_types, sum_total=sum_total)
+    return summarize_total(title, res.json(), order_do_types=order_do_types, sum_total=sum_total, order_by_name=order_by_name)
 
 
 def format_percent(current, past):

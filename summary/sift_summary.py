@@ -7,7 +7,7 @@ from utils import *
 results_list = [
     summarize3('Sift Worker'),
     summarize3('Sift Extract'),
-    summarize3('Sift Summary'),
+    summarize3('Sift Summary', order_by_name=True),
     summarize3('Open API'),
     summarize3('Open Nginx'),
     summarize3('Flight Worker'),
